@@ -1,0 +1,38 @@
+body {
+    font-family: "Cairo", sans-serif;
+    font-size:20px;
+}
+header {
+    font-size:30px;
+    font-weight: 800;
+}
+footer .info {
+    color: #555;
+    font-size: 16px;
+}
+.my-indicator{
+    display:none;
+}
+.htmx-request .my-indicator{
+    display:inline-flex;
+}
+.htmx-request.my-indicator{
+    color: #68A0F1;
+    display:inline-flex;
+}
+.bx-phone {
+    font-size: 1.5rem;
+}
+
+/* Hide type="number" arrows */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
