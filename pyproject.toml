@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "TelSök"
+name = "TelSok"
 version = "0.1.0"
 description = ""
 authors = ["dunderrrrrr <emil.bjorkroth@gmail.com>"]
