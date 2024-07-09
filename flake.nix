@@ -33,6 +33,7 @@
         shellHook = ''
           export CHROMEDRIVER_PATH=${pkgs.chromedriver + "/bin/chromedriver"}
           export CHROME_PATH=${pkgs.chromium + "/bin/chromium"}
+          export FLASK_APP="telsok"
 
           ${lib.getExe pkgs.poetry} env use ${lib.getExe pkgs.python3}
           ${lib.getExe pkgs.poetry} install --all-extras --no-root --sync
