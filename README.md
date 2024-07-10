@@ -15,5 +15,5 @@ To run local dev environment, start server with `flask run`, add `--debug` for a
 Three steps. Build image, load it into `docker` and start image.
 
 ```
-nix build .#testBuild && docker load < result && docker run -p 9191:9191 -t telsok:latest
+nix build .#dockerImage && docker load < result && docker run -p 9191:9191 -t telsok:latest
 ```

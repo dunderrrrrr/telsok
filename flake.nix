@@ -55,10 +55,6 @@
               poetryEnv
             ];
 
-            # selenium data dir
-            # cannot create temp dir for user data dir
-            extraCommands = "mkdir -p /tmp";
-
             config = {
               Cmd = ["python" "telsok.py"];
               Env = [
