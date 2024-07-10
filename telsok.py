@@ -67,11 +67,13 @@ def pts(number: str) -> str:
 
 @app.route("/c/ratsit/<number>", methods=["GET"])
 def ratsit(number: str) -> str:
+    return "kkka"
     return str(check_ratsit(number))
 
 
 @app.route("/c/eniro/<number>", methods=["GET"])
 def eniro(number: str) -> str:
+    return "kaka"
     return str(check_eniro(number))
 
 
