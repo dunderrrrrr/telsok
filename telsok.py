@@ -1,4 +1,5 @@
 import re
+from waitress import serve
 from constants import TABS
 from helpers import PhoneFormatter
 from checker.pts import check_pts
@@ -97,3 +98,7 @@ def google(number: str) -> str:
 @app.route("/c/google/<number>", methods=["POST"])
 def google_search(number: str) -> str:
     return str(check_google(number))
+
+
+if __name__ == "__main__":
+    serve(app, host="0.0.0.0", port=9191)

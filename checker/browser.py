@@ -1,4 +1,5 @@
 import os
+import uuid
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -13,7 +14,13 @@ def chrome(headless: bool = True) -> WebDriver:
     options = Options()
     if headless:
         options.add_argument("--headless")
+
+    # create unique user-data-dirs for each browser
+    data_dir_path = f"/tmp/{str(uuid.uuid4())}"
+    os.makedirs(data_dir_path)
+
     options.add_argument(f"user-agent={USER_AGENT}")
+    options.add_argument(f"--user-data-dir={data_dir_path}")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("enable-automation")
