@@ -14,6 +14,7 @@ def chrome(headless: bool = True) -> WebDriver:
     if headless:
         options.add_argument("--headless")
     options.add_argument(f"user-agent={USER_AGENT}")
+    options.add_argument("--user-data-dir=/tmp")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("enable-automation")

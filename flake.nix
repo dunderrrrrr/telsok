@@ -33,6 +33,41 @@
           inherit system;
           overlays = [poetry2nix.overlays.default];
         };
+
+        packages.dockerImage = let
+          appPort = "9191";
+          app = pkgs.lib.fileset.toSource {
+            root = ./.;
+            fileset = ./.;
+          };
+        in
+          pkgs.dockerTools.buildLayeredImage {
+            name = "telsok";
+            tag = "latest";
+            created = "now";
+            contents = [
+              app
+              pkgs.chromedriver
+              pkgs.chromium
+              pkgs.coreutils
+              pkgs.util-linux
+              pkgs.bash
+              poetryEnv
+            ];
+
+            # selenium data dir
+            # cannot create temp dir for user data dir
+            extraCommands = "mkdir -p /tmp";
+
+            config = {
+              Cmd = ["python" "telsok.py"];
+              Env = [
+                "CHROMEDRIVER_PATH=${pkgs.chromedriver + "/bin/chromedriver"}"
+                "CHROME_PATH=${pkgs.chromium + "/bin/chromium"}"
+              ];
+            };
+          };
+
         devShells.default = pkgs.mkShell {
           packages = [
             pkgs.chromedriver
