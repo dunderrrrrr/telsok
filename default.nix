@@ -1,4 +1,4 @@
-{ pkgs }:
+{pkgs}:
 pkgs.poetry2nix.mkPoetryEnv {
   python = pkgs.python312;
   projectDir = ./.;
