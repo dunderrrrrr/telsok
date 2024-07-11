@@ -1,22 +1,17 @@
+import requests  # type: ignore[import-untyped]
 from htpy import Element, p
-from checker.browser import chrome
-from selenium.webdriver.common.by import By
+from requests.exceptions import ConnectionError  # type: ignore[import-untyped]
 
 
 def check_pts(number: str) -> Element:
-    driver = chrome()
-    driver.get("https://nummer.pts.se/NbrSearch")
-
-    # fill search input and perform search
-    driver.find_element(By.XPATH, "//input[@id='NbrToSearch']").send_keys(number)
-    driver.find_element(By.XPATH, "//button[@type='submit']").click()
-
-    # grab results from success alert
     try:
-        result = driver.find_element(By.XPATH, "//div[contains(@class, 'alert')]")
-    except:
-        result = driver.find_element(
-            By.XPATH, "//span[contains(@class, 'field-validation-error')]"
+        response = requests.get(
+            f"https://www.inabler.se/ocean/nosearch.php?number={number}"
         )
+    except ConnectionError:
+        return p["Någonting gick fel."]
 
-    return p[result.text]
+    if response.status_code == 200:
+        return p[response.content.decode()]
+    else:
+        return p[f"Felkod: {response.status_code}"]
