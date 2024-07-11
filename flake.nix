@@ -41,19 +41,23 @@
             fileset = ./.;
           };
         in
-          pkgs.dockerTools.buildLayeredImage {
+          pkgs.dockerTools.buildImage {
             name = "telsok";
             tag = "latest";
             created = "now";
-            contents = [
-              app
-              pkgs.chromedriver
-              pkgs.chromium
-              pkgs.coreutils
-              pkgs.util-linux
-              pkgs.bash
-              poetryEnv
-            ];
+            copyToRoot = pkgs.buildEnv {
+                name = "image-root";
+                pathsToLink = ["/"];
+                paths = [
+                    app
+                    pkgs.chromedriver
+                    pkgs.chromium
+                    # pkgs.coreutils
+                    # pkgs.util-linux
+                    # pkgs.bash
+                    poetryEnv
+                ];
+            };
 
             config = {
               Cmd = ["python" "telsok.py"];
