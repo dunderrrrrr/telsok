@@ -10,7 +10,7 @@ Make sure to set `GOOGLE_API_KEY` environment variable.
 
 To run local dev environment, start server with `flask run`, add `--debug` for auto-reloading.
 
-## Scraper
+## Environments
 Add `scraper/.env`.
 ```
 MONGODB_URI=mongodb://root:example@webscrape-mongo:27017
@@ -21,6 +21,11 @@ HOSTNAME="localhost"
 HOSTNAME_DEV="localhost"
 ```
 https://github.com/jaypyles/Scraperr
+
+Add `.env`.
+```
+GOOGLE_API_KEY="your_key"
+```
 
 ## Build image
 

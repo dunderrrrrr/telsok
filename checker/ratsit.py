@@ -1,4 +1,4 @@
-import requests
+import requests  # type: ignore[import-untyped]
 from dataclasses import dataclass
 from htpy import Element, button, div, h2, ul, li, a, span, p
 
