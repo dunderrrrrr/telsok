@@ -1,64 +1,65 @@
 import time
 from checker.browser import chrome
 from selenium.webdriver.common.by import By
-from htpy import Element, button, div, h2, ul, li
+from htpy import Element, button, div, h2, ul, li, a, span, p
+import requests
+import datetime
+from dataclasses import dataclass
 
 
-def _clean_text(text: str) -> str:
-    if "gav inga träffar" in text:
-        return text.split(".")[0]
-    return text.replace("Se lön direkt", "")
+@dataclass
+class RatsitHit:
+    name: str
+    address: str
+    url: str
 
-
-def _split_toggler_text(text: str) -> int:
-    return int(text.split(" ")[1])
+    @property
+    def display_value(self) -> str:
+        return str(
+            span[
+                a(href=self.url, target="_blank")[f"{self.name}"],
+                span[f" {self.address}"],
+            ]
+        )
 
 
 def check_ratsit(number: str) -> Element:
-    driver = chrome()
-    driver.get(f"https://www.ratsit.se/sok/foretag?vem={number}")
-
-    time.sleep(5)
-
-    # accept cookie popup
-    try:
-        driver.find_element(
-            By.XPATH, "//*[contains(text(), 'Tillåt alla cookies')]"
-        ).click()
-    except:
-        pass
-
-    # the "persons/companies-toggler"
-    toggler = driver.find_elements(
-        By.XPATH, "//div[contains(@class, 'search-segment')]//a"
+    response = requests.post(
+        "https://www.ratsit.se/api/search/combined",
+        json={
+            "who": number,
+            "phoneticSearch": True,
+            "page": 1,
+            "url": "/sok/foretag?vem=0760531600",
+        },
     )
 
-    # grab persons link and counts
-    persons_link = toggler[0]
-    persons_count = _split_toggler_text(persons_link.text)
+    if response.status_code != 200:
+        return p["Någonting gick fel..."]
 
-    # grab companies link and counts
-    companies_link = toggler[1]
-    companies_count = _split_toggler_text(companies_link.text)
+    company_results: list[RatsitHit] = []
+    company_hits = response.json()["company"]["hits"]
+    if len(company_hits):
+        for company in company_hits:
+            company_results.append(
+                RatsitHit(
+                    name=company["companyName"],
+                    address=company["address"],
+                    url=company["companyUrl"],
+                )
+            )
 
-    # get companies data
-    companies = [
-        _clean_text(a.text)
-        for a in driver.find_elements(
-            By.XPATH, "//div[contains(@class, 'search-result-list-holder d-block')]"
-        )
-        if a.text
-    ]
-
-    # move to persons and get persons data
-    persons_link.click()
-    persons = [
-        _clean_text(a.text)
-        for a in driver.find_elements(
-            By.XPATH, "//div[contains(@class, 'search-result-list-holder d-block')]"
-        )
-        if a.text
-    ]
+    person_results: list[RatsitHit] = []
+    person_hits = response.json()["person"]["hits"]
+    if len(person_hits):
+        for person in person_hits:
+            person_results.append(
+                RatsitHit(
+                    name=f'{person["firstName"]} {person["lastName"]} ({person["age"]})',
+                    address=f', {person["streetAddress"]}, {person["city"]}',
+                    url=person["personUrl"],
+                )
+            )
 
     return div("#accordionRatsit.accordion")[
         div(".accordion-item")[
@@ -70,13 +71,21 @@ def check_ratsit(number: str) -> Element:
                     data_bs_target="#persons",
                     aria_expanded="false",
                     aria_controls="persons",
-                )[f"Personer: {persons_count} st"]
+                )[f"Personer: {len(person_hits)} st"]
             ],
             div(
                 "#persons.accordion-collapse.collapse.collapse",
                 data_bs_parent="#accordionRatsit",
             )[
-                div(".accordion-body")[ul[(li[person] for person in persons)],]
+                div(".accordion-body")[
+                    ul[
+                        (
+                            li[person.display_value]
+                            for person in person_results
+                            if person_results
+                        )
+                    ],
+                ]
             ],
         ],
         div(".accordion-item")[
@@ -88,13 +97,21 @@ def check_ratsit(number: str) -> Element:
                     data_bs_target="#companies",
                     aria_expanded="false",
                     aria_controls="companies",
-                )[f"Företag: {companies_count} st"]
+                )[f"Företag: {len(company_hits)} st"]
             ],
             div(
                 "#companies.accordion-collapse.collapse",
                 data_bs_parent="#accordionRatsit",
             )[
-                div(".accordion-body")[ul[(li[company] for company in companies)],]
+                div(".accordion-body")[
+                    ul[
+                        (
+                            li[company.display_value]
+                            for company in company_results
+                            if company_results
+                        )
+                    ],
+                ]
             ],
         ],
     ]
