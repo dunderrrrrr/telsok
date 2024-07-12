@@ -1,10 +1,6 @@
-import time
-from checker.browser import chrome
-from selenium.webdriver.common.by import By
-from htpy import Element, button, div, h2, ul, li, a, span, p
 import requests
-import datetime
 from dataclasses import dataclass
+from htpy import Element, button, div, h2, ul, li, a, span, p
 
 
 @dataclass
