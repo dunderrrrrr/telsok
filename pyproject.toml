@@ -11,7 +11,7 @@ htpy = "^24.6.1"
 flask = "^3.0.3"
 google-api-python-client = "^2.136.0"
 python-dotenv = "^1.0.1"
-waitress = "^3.0.0"
+waitress = "^3.0.1"
 
 
 [build-system]
